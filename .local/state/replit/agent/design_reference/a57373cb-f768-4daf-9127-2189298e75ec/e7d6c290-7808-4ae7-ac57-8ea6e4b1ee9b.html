@@ -1,0 +1,1338 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceFlow - Time Tracking & Invoice Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-inter">
+    <!-- @COMPONENT: Layout Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- @COMPONENT: Sidebar Navigation -->
+        <aside class="w-64 bg-white shadow-sm border-r border-slate-200 flex flex-col">
+            <!-- @COMPONENT: Logo Section -->
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-slate-800">FreelanceFlow</h1>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Navigation Menu -->
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-primary text-white font-medium" data-tab="dashboard">
+                            <i class="fas fa-home w-5"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="time-tracking">
+                            <i class="fas fa-play-circle w-5"></i>
+                            <span>Time Tracking</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="projects">
+                            <i class="fas fa-folder w-5"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="invoices">
+                            <i class="fas fa-file-invoice w-5"></i>
+                            <span>Invoices</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="ab-testing">
+                            <i class="fas fa-flask w-5"></i>
+                            <span>A/B Testing</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="clients">
+                            <i class="fas fa-users w-5"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium" data-tab="reports">
+                            <i class="fas fa-chart-line w-5"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- @COMPONENT: User Profile Section -->
+            <div class="p-4 border-t border-slate-200">
+                <div class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-100">
+                    <div class="w-8 h-8 bg-slate-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-slate-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-800" data-bind="user.name">Sarah Johnson</p>
+                        <p class="text-xs text-slate-500">Freelancer</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar Navigation -->
+
+        <!-- @COMPONENT: Main Content Area -->
+        <main class="flex-1 overflow-auto">
+            <!-- @COMPONENT: Dashboard Tab -->
+            <div id="dashboard" class="tab-content p-8">
+                <!-- @COMPONENT: Header Section -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Dashboard</h2>
+                    <p class="text-slate-600">Overview of your freelance business performance</p>
+                </div>
+
+                <!-- @COMPONENT: Stats Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">This Month</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="stats.monthlyHours">127.5h</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-blue-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> +12% from last month</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Revenue</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="stats.revenue">$8,450</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> +8% from last month</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Active Projects</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="stats.activeProjects">7</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-folder text-purple-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">2 due this week</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Pending Invoices</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="stats.pendingInvoices">$3,200</p>
+                            </div>
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-invoice text-amber-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-amber-600 mt-2">3 invoices pending</p>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Recent Activity & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- @COMPONENT: Recent Activity -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Recent Activity</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: recentActivity.map(activity => ( -->
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-play text-blue-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-800" data-mock="true">Started working on Website Redesign</p>
+                                    <p class="text-xs text-slate-500" data-mock="true">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-file-invoice text-green-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-800" data-mock="true">Invoice #1023 paid by TechCorp</p>
+                                    <p class="text-xs text-slate-500" data-mock="true">Yesterday</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-plus text-purple-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-800" data-mock="true">New client added: StartupXYZ</p>
+                                    <p class="text-xs text-slate-500" data-mock="true">2 days ago</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- @COMPONENT: Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-primary text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-event="click:startTimer">
+                                <i class="fas fa-play mr-2"></i>Start Timer
+                            </button>
+                            <button class="w-full bg-secondary text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors" data-event="click:createInvoice">
+                                <i class="fas fa-plus mr-2"></i>Create Invoice
+                            </button>
+                            <button class="w-full bg-accent text-white px-4 py-3 rounded-lg font-medium hover:bg-violet-700 transition-colors" data-event="click:addProject">
+                                <i class="fas fa-folder-plus mr-2"></i>New Project
+                            </button>
+                            <button class="w-full border border-slate-300 text-slate-700 px-4 py-3 rounded-lg font-medium hover:bg-slate-50 transition-colors" data-event="click:addClient">
+                                <i class="fas fa-user-plus mr-2"></i>Add Client
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Dashboard Tab -->
+
+            <!-- @COMPONENT: Time Tracking Tab -->
+            <div id="time-tracking" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Time Tracking</h2>
+                    <p class="text-slate-600">Track your project hours with precision</p>
+                </div>
+
+                <!-- @COMPONENT: Active Timer -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                                <i class="fas fa-play text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-slate-800" data-bind="activeTimer.project">Website Redesign</h3>
+                                <p class="text-slate-600" data-bind="activeTimer.client">TechCorp Inc.</p>
+                                <p class="text-sm text-slate-500">Started at <span data-bind="activeTimer.startTime">2:30 PM</span></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-bold text-slate-800 mb-2" data-bind="activeTimer.elapsed">02:47:32</div>
+                            <div class="flex space-x-2">
+                                <button class="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors" data-event="click:stopTimer">
+                                    <i class="fas fa-stop mr-2"></i>Stop
+                                </button>
+                                <button class="bg-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-600 transition-colors" data-event="click:pauseTimer">
+                                    <i class="fas fa-pause mr-2"></i>Pause
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Start New Timer -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Start New Timer</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Project</label>
+                            <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option data-mock="true">Website Redesign</option>
+                                <option data-mock="true">Mobile App Development</option>
+                                <option data-mock="true">Brand Identity Design</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Task Description</label>
+                            <input type="text" placeholder="What are you working on?" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" data-mock="true">
+                        </div>
+                        <div class="flex items-end">
+                            <button class="w-full bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors" data-event="click:startNewTimer">
+                                <i class="fas fa-play mr-2"></i>Start Timer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Today's Time Entries -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-800">Today's Time Entries</h3>
+                        <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-event="click:addManualEntry">
+                            <i class="fas fa-plus mr-2"></i>Manual Entry
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Project</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Task</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Time</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Duration</th>
+                                    <th class="text-right py-3 text-sm font-medium text-slate-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: todayEntries.map(entry => ( -->
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Website Redesign</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Homepage wireframes</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">9:00 AM - 11:30 AM</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">2h 30m</td>
+                                    <td class="py-4 text-right">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2" data-event="click:editEntry"><i class="fas fa-edit"></i></button>
+                                        <button class="text-red-600 hover:text-red-800" data-event="click:deleteEntry"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Mobile App</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">User authentication</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">1:00 PM - 2:47 PM</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">1h 47m</td>
+                                    <td class="py-4 text-right">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2" data-event="click:editEntry"><i class="fas fa-edit"></i></button>
+                                        <button class="text-red-600 hover:text-red-800" data-event="click:deleteEntry"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 p-4 bg-slate-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-700">Total Today:</span>
+                            <span class="text-lg font-bold text-slate-800" data-bind="todayTotal">6h 17m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Time Tracking Tab -->
+
+            <!-- @COMPONENT: Projects Tab -->
+            <div id="projects" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-2">Projects</h2>
+                            <p class="text-slate-600">Manage all your freelance projects</p>
+                        </div>
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-event="click:createProject">
+                            <i class="fas fa-plus mr-2"></i>New Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Project Filters -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Status:</label>
+                            <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>All Projects</option>
+                                <option>Active</option>
+                                <option>Completed</option>
+                                <option>On Hold</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Client:</label>
+                            <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>All Clients</option>
+                                <option data-mock="true">TechCorp Inc.</option>
+                                <option data-mock="true">StartupXYZ</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <input type="text" placeholder="Search projects..." class="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Projects Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- @MAP: projects.map(project => ( -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-800 mb-1" data-mock="true">Website Redesign</h3>
+                                <p class="text-sm text-slate-600" data-mock="true">TechCorp Inc.</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">Active</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4" data-mock="true">Complete redesign of corporate website with modern UI/UX principles and responsive design.</p>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Budget:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$5,000</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Hours Tracked:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">32.5h</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Deadline:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Dec 15, 2024</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Progress</span>
+                                <span data-mock="true">65%</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewProject">
+                                View Details
+                            </button>
+                            <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors" data-event="click:editProject">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-800 mb-1" data-mock="true">Mobile App Development</h3>
+                                <p class="text-sm text-slate-600" data-mock="true">StartupXYZ</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">In Progress</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4" data-mock="true">Native iOS and Android app with user authentication and real-time messaging features.</p>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Budget:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$12,000</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Hours Tracked:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">89.2h</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Deadline:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Jan 30, 2025</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Progress</span>
+                                <span data-mock="true">40%</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewProject">
+                                View Details
+                            </button>
+                            <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors" data-event="click:editProject">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-800 mb-1" data-mock="true">Brand Identity Design</h3>
+                                <p class="text-sm text-slate-600" data-mock="true">Creative Agency Pro</p>
+                            </div>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">Completed</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4" data-mock="true">Complete brand identity package including logo, color palette, and brand guidelines.</p>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Budget:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$3,500</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Hours Tracked:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">24.8h</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Completed:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Nov 28, 2024</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Progress</span>
+                                <span data-mock="true">100%</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewProject">
+                                View Details
+                            </button>
+                            <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors" data-event="click:editProject">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Projects Tab -->
+
+            <!-- @COMPONENT: Invoices Tab -->
+            <div id="invoices" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-2">Invoices</h2>
+                            <p class="text-slate-600">Generate and manage your invoices</p>
+                        </div>
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-event="click:createInvoice">
+                            <i class="fas fa-plus mr-2"></i>Create Invoice
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Invoice Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Paid</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="invoiceStats.paid">$15,600</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-amber-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Pending</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="invoiceStats.pending">$3,200</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Overdue</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="invoiceStats.overdue">$850</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-invoice text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Total Invoices</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="invoiceStats.total">23</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Invoice Filters -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Status:</label>
+                            <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>All Invoices</option>
+                                <option>Draft</option>
+                                <option>Sent</option>
+                                <option>Paid</option>
+                                <option>Overdue</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Date Range:</label>
+                            <input type="date" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <span class="text-slate-500">to</span>
+                            <input type="date" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Invoices Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Invoice #</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Client</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Project</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Amount</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Date</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Status</th>
+                                    <th class="text-right py-3 text-sm font-medium text-slate-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: invoices.map(invoice => ( -->
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">#1024</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">TechCorp Inc.</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Website Redesign</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$2,500</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Dec 1, 2024</td>
+                                    <td class="py-4">
+                                        <span class="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">Pending</span>
+                                    </td>
+                                    <td class="py-4 text-right">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" data-event="click:viewInvoice"><i class="fas fa-eye"></i></button>
+                                            <button class="text-green-600 hover:text-green-800" data-event="click:downloadPDF"><i class="fas fa-download"></i></button>
+                                            <button class="text-purple-600 hover:text-purple-800" data-event="click:sendInvoice"><i class="fas fa-paper-plane"></i></button>
+                                            <button class="text-slate-600 hover:text-slate-800" data-event="click:editInvoice"><i class="fas fa-edit"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">#1023</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">StartupXYZ</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Mobile App</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$4,200</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Nov 28, 2024</td>
+                                    <td class="py-4">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">Paid</span>
+                                    </td>
+                                    <td class="py-4 text-right">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" data-event="click:viewInvoice"><i class="fas fa-eye"></i></button>
+                                            <button class="text-green-600 hover:text-green-800" data-event="click:downloadPDF"><i class="fas fa-download"></i></button>
+                                            <button class="text-purple-600 hover:text-purple-800" data-event="click:sendInvoice"><i class="fas fa-paper-plane"></i></button>
+                                            <button class="text-slate-600 hover:text-slate-800" data-event="click:editInvoice"><i class="fas fa-edit"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">#1022</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Creative Agency</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Brand Identity</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$3,500</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Nov 15, 2024</td>
+                                    <td class="py-4">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full" data-mock="true">Paid</span>
+                                    </td>
+                                    <td class="py-4 text-right">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" data-event="click:viewInvoice"><i class="fas fa-eye"></i></button>
+                                            <button class="text-green-600 hover:text-green-800" data-event="click:downloadPDF"><i class="fas fa-download"></i></button>
+                                            <button class="text-purple-600 hover:text-purple-800" data-event="click:sendInvoice"><i class="fas fa-paper-plane"></i></button>
+                                            <button class="text-slate-600 hover:text-slate-800" data-event="click:editInvoice"><i class="fas fa-edit"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Invoices Tab -->
+
+            <!-- @COMPONENT: A/B Testing Tab -->
+            <div id="ab-testing" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">A/B Testing</h2>
+                    <p class="text-slate-600">Optimize your invoice templates and improve payment rates</p>
+                </div>
+
+                <!-- @COMPONENT: A/B Testing Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-flask text-accent"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Active Tests</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="abStats.activeTests">3</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-eye text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Avg. Open Rate</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="abStats.openRate">78.5%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-credit-card text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-600">Avg. Payment Rate</p>
+                                <p class="text-xl font-bold text-slate-800" data-bind="abStats.paymentRate">92.3%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Create New Test -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-800">Create New A/B Test</h3>
+                        <button class="bg-accent text-white px-4 py-2 rounded-lg font-medium hover:bg-violet-700 transition-colors" data-event="click:createABTest">
+                            <i class="fas fa-plus mr-2"></i>Start Test
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Test Name</label>
+                            <input type="text" placeholder="e.g., Payment Terms Comparison" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Test Type</label>
+                            <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                                <option>Invoice Template</option>
+                                <option>Subject Line</option>
+                                <option>Payment Terms</option>
+                                <option>Call to Action</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Duration</label>
+                            <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent">
+                                <option>1 Week</option>
+                                <option>2 Weeks</option>
+                                <option>1 Month</option>
+                                <option>Until Significant</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Active Tests -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-6">Active Tests</h3>
+                    <div class="space-y-6">
+                        <!-- @MAP: activeTests.map(test => ( -->
+                        <div class="border border-slate-200 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h4 class="text-lg font-medium text-slate-800" data-mock="true">Invoice Template Design</h4>
+                                    <p class="text-sm text-slate-600" data-mock="true">Testing minimalist vs. detailed template layouts</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Running</span>
+                                    <button class="text-slate-600 hover:text-slate-800" data-event="click:stopTest"><i class="fas fa-stop"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="border border-slate-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h5 class="font-medium text-slate-800">Variant A (Control)</h5>
+                                        <span class="text-sm text-slate-600" data-mock="true">50% traffic</span>
+                                    </div>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Sent:</span>
+                                            <span class="font-medium" data-mock="true">45 invoices</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Opened:</span>
+                                            <span class="font-medium" data-mock="true">36 (80%)</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Paid:</span>
+                                            <span class="font-medium text-green-600" data-mock="true">41 (91%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border border-slate-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h5 class="font-medium text-slate-800">Variant B (Test)</h5>
+                                        <span class="text-sm text-slate-600" data-mock="true">50% traffic</span>
+                                    </div>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Sent:</span>
+                                            <span class="font-medium" data-mock="true">43 invoices</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Opened:</span>
+                                            <span class="font-medium" data-mock="true">35 (81%)</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Paid:</span>
+                                            <span class="font-medium text-green-600" data-mock="true">41 (95%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-slate-50 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">Current Leader: <span class="text-green-600" data-mock="true">Variant B (+4% payment rate)</span></p>
+                                        <p class="text-xs text-slate-600" data-mock="true">Confidence: 73% | Need 15 more samples for 95% confidence</p>
+                                    </div>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewTestDetails">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Test Results History -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-6">Completed Tests</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Test Name</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Duration</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Winner</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Improvement</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Confidence</th>
+                                    <th class="text-right py-3 text-sm font-medium text-slate-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: completedTests.map(test => ( -->
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Payment Button Color</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">2 weeks</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Green Button</td>
+                                    <td class="py-4 text-sm font-medium text-green-600" data-mock="true">+12% payment rate</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">98%</td>
+                                    <td class="py-4 text-right">
+                                        <button class="text-blue-600 hover:text-blue-800" data-event="click:viewTestReport"><i class="fas fa-chart-bar"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Subject Line Urgency</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">10 days</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Gentle Reminder</td>
+                                    <td class="py-4 text-sm font-medium text-green-600" data-mock="true">+8% open rate</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">95%</td>
+                                    <td class="py-4 text-right">
+                                        <button class="text-blue-600 hover:text-blue-800" data-event="click:viewTestReport"><i class="fas fa-chart-bar"></i></button>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: A/B Testing Tab -->
+
+            <!-- @COMPONENT: Clients Tab -->
+            <div id="clients" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-2">Clients</h2>
+                            <p class="text-slate-600">Manage your client relationships</p>
+                        </div>
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-event="click:addClient">
+                            <i class="fas fa-plus mr-2"></i>Add Client
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Client Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-slate-800" data-bind="clientStats.total">12</p>
+                            <p class="text-sm text-slate-600">Total Clients</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-green-600" data-bind="clientStats.active">8</p>
+                            <p class="text-sm text-slate-600">Active Projects</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-blue-600" data-bind="clientStats.avgValue">$4,200</p>
+                            <p class="text-sm text-slate-600">Avg Project Value</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-amber-600" data-bind="clientStats.retention">89%</p>
+                            <p class="text-sm text-slate-600">Retention Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Clients Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- @MAP: clients.map(client => ( -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <span class="text-primary font-semibold" data-mock="true">TC</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-800" data-mock="true">TechCorp Inc.</h3>
+                                    <p class="text-sm text-slate-600" data-mock="true">Enterprise</p>
+                                </div>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600" data-event="click:clientMenu">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-envelope w-4 mr-2"></i>
+                                <span data-mock="true">contact@techcorp.com</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-phone w-4 mr-2"></i>
+                                <span data-mock="true">+1 (555) 123-4567</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+                                <span data-mock="true">San Francisco, CA</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-200 pt-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Active Projects:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">2</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Total Revenue:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$12,500</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Last Invoice:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Dec 1, 2024</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewClient">
+                                View Details
+                            </button>
+                            <button class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors" data-event="click:createInvoiceForClient">
+                                <i class="fas fa-file-invoice"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <span class="text-green-600 font-semibold" data-mock="true">SX</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-800" data-mock="true">StartupXYZ</h3>
+                                    <p class="text-sm text-slate-600" data-mock="true">Startup</p>
+                                </div>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600" data-event="click:clientMenu">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-envelope w-4 mr-2"></i>
+                                <span data-mock="true">hello@startupxyz.com</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-phone w-4 mr-2"></i>
+                                <span data-mock="true">+1 (555) 987-6543</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+                                <span data-mock="true">Austin, TX</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-200 pt-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Active Projects:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">1</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Total Revenue:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$8,400</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Last Invoice:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Nov 28, 2024</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewClient">
+                                View Details
+                            </button>
+                            <button class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors" data-event="click:createInvoiceForClient">
+                                <i class="fas fa-file-invoice"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <span class="text-purple-600 font-semibold" data-mock="true">CA</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-800" data-mock="true">Creative Agency Pro</h3>
+                                    <p class="text-sm text-slate-600" data-mock="true">Agency</p>
+                                </div>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600" data-event="click:clientMenu">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-envelope w-4 mr-2"></i>
+                                <span data-mock="true">projects@creativeagency.pro</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-phone w-4 mr-2"></i>
+                                <span data-mock="true">+1 (555) 456-7890</span>
+                            </div>
+                            <div class="flex items-center text-sm text-slate-600">
+                                <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+                                <span data-mock="true">New York, NY</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-200 pt-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Active Projects:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-slate-600">Total Revenue:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">$3,500</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Last Invoice:</span>
+                                <span class="font-medium text-slate-800" data-mock="true">Nov 15, 2024</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 mt-4">
+                            <button class="flex-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:viewClient">
+                                View Details
+                            </button>
+                            <button class="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors" data-event="click:createInvoiceForClient">
+                                <i class="fas fa-file-invoice"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Clients Tab -->
+
+            <!-- @COMPONENT: Reports Tab -->
+            <div id="reports" class="tab-content p-8 hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Reports</h2>
+                    <p class="text-slate-600">Analyze your freelance business performance</p>
+                </div>
+
+                <!-- @COMPONENT: Report Filters -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Time Period:</label>
+                            <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Last 30 Days</option>
+                                <option>Last 3 Months</option>
+                                <option>Last 6 Months</option>
+                                <option>Last Year</option>
+                                <option>Custom Range</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-700">Report Type:</label>
+                            <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Financial Summary</option>
+                                <option>Time Analysis</option>
+                                <option>Client Performance</option>
+                                <option>Project Breakdown</option>
+                            </select>
+                        </div>
+                        <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-event="click:generateReport">
+                            <i class="fas fa-chart-line mr-2"></i>Generate Report
+                        </button>
+                        <button class="border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors" data-event="click:exportReport">
+                            <i class="fas fa-download mr-2"></i>Export PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Total Revenue</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="reports.totalRevenue">$24,850</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> +15% from last period</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Billable Hours</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="reports.billableHours">342.5h</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-blue-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-blue-600 mt-2"><i class="fas fa-arrow-up"></i> +8% from last period</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Avg Hourly Rate</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="reports.hourlyRate">$72.50</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calculator text-purple-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-purple-600 mt-2"><i class="fas fa-arrow-up"></i> +5% from last period</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-600 mb-1">Projects Completed</p>
+                                <p class="text-2xl font-bold text-slate-800" data-bind="reports.projectsCompleted">8</p>
+                            </div>
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-amber-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">2 ahead of target</p>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- @COMPONENT: Revenue Chart -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Revenue Trend</h3>
+                        <div class="h-64 flex items-center justify-center bg-slate-50 rounded-lg">
+                            <!-- @FUNCTIONALITY: This should implement a line chart showing revenue over time using a charting library like Chart.js -->
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-4xl text-slate-400 mb-2"></i>
+                                <p class="text-slate-600">Revenue Chart Placeholder</p>
+                                <p class="text-xs text-slate-500">Implement with Chart.js or similar</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- @COMPONENT: Time Distribution Chart -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Time Distribution by Project</h3>
+                        <div class="h-64 flex items-center justify-center bg-slate-50 rounded-lg">
+                            <!-- @FUNCTIONALITY: This should implement a pie chart showing time distribution across projects -->
+                            <div class="text-center">
+                                <i class="fas fa-chart-pie text-4xl text-slate-400 mb-2"></i>
+                                <p class="text-slate-600">Pie Chart Placeholder</p>
+                                <p class="text-xs text-slate-500">Implement with Chart.js or similar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: Detailed Reports Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-6">Project Performance Details</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Project</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Client</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Hours</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Revenue</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Rate</th>
+                                    <th class="text-left py-3 text-sm font-medium text-slate-600">Profit Margin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: reportData.map(project => ( -->
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Website Redesign</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">TechCorp Inc.</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">32.5h</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$2,600</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">$80/hr</td>
+                                    <td class="py-4 text-sm font-medium text-green-600" data-mock="true">85%</td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Mobile App Development</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">StartupXYZ</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">89.2h</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$6,244</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">$70/hr</td>
+                                    <td class="py-4 text-sm font-medium text-green-600" data-mock="true">82%</td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">Brand Identity Design</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">Creative Agency Pro</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">24.8h</td>
+                                    <td class="py-4 text-sm font-medium text-slate-800" data-mock="true">$1,984</td>
+                                    <td class="py-4 text-sm text-slate-600" data-mock="true">$80/hr</td>
+                                    <td class="py-4 text-sm font-medium text-green-600" data-mock="true">88%</td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Reports Tab -->
+        </main>
+        <!-- @END_COMPONENT: Main Content Area -->
+    </div>
+    <!-- @END_COMPONENT: Layout Container -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Tab switching functionality for demonstration
+            const tabLinks = document.querySelectorAll('[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetTab = this.getAttribute('data-tab');
+
+                    // Remove active classes
+                    tabLinks.forEach(l => {
+                        l.classList.remove('bg-primary', 'text-white');
+                        l.classList.add('text-slate-600', 'hover:bg-slate-100');
+                    });
+
+                    // Add active class to clicked tab
+                    this.classList.add('bg-primary', 'text-white');
+                    this.classList.remove('text-slate-600', 'hover:bg-slate-100');
+
+                    // Hide all tab contents
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+
+                    // Show target tab content
+                    const targetContent = document.getElementById(targetTab);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Timer functionality simulation
+            let timerInterval;
+            let startTime = new Date();
+            startTime.setHours(startTime.getHours() - 2, startTime.getMinutes() - 47, startTime.getSeconds() - 32);
+
+            function updateTimer() {
+                const now = new Date();
+                const elapsed = now - startTime;
+                const hours = Math.floor(elapsed / (1000 * 60 * 60));
+                const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+                const timerDisplay = document.querySelector('[data-bind="activeTimer.elapsed"]');
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            // Start timer simulation
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Initial call
+
+            // Button click handlers for demonstration
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-event]');
+                if (!target) return;
+
+                const eventType = target.getAttribute('data-event');
+                console.log('Event triggered:', eventType);
+
+                // Add visual feedback
+                target.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    target.style.transform = '';
+                }, 150);
+            });
+        })();
+    </script>
+</body>
+</html>

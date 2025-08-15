@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceTracker Pro - Project & Invoice Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#7C3AED',
+                        accent: '#10B981',
+                        warning: '#F59E0B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans">
+    
+    <!-- @COMPONENT: TopNavigation [user profile, notifications, settings] -->
+    <nav class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-40">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold text-slate-900">FreelanceTracker Pro</h1>
+                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">Beta</span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- @FUNCTIONALITY: Real-time notifications -->
+                <button class="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+                    <i class="fas fa-bell text-lg"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" data-mock="true">3</span>
+                </button>
+                
+                <!-- A/B Testing Toggle -->
+                <div class="flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2">
+                    <i class="fas fa-flask text-secondary text-sm"></i>
+                    <span class="text-sm font-medium text-slate-700">A/B Testing</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked data-implementation="Toggle A/B testing mode">
+                        <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+                    </label>
+                </div>
+                
+                <!-- User Profile -->
+                <div class="flex items-center space-x-3" data-bind="currentUser">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&w=32&h=32&fit=crop&crop=face" alt="User avatar" class="w-8 h-8 rounded-full object-cover" data-mock-image="true">
+                    <div class="hidden md:block">
+                        <p class="text-sm font-medium text-slate-900" data-mock="true">John Doe</p>
+                        <p class="text-xs text-slate-500" data-mock="true">Admin</p>
+                    </div>
+                    <i class="fas fa-chevron-down text-slate-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: TopNavigation -->
+
+    <div class="flex">
+        <!-- @COMPONENT: Sidebar [navigation menu with role-based items] -->
+        <aside class="w-64 bg-white border-r border-slate-200 min-h-screen sticky top-16">
+            <div class="p-6">
+                <!-- Time Tracking Widget -->
+                <div class="bg-gradient-to-r from-primary to-secondary rounded-xl p-4 text-white mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm opacity-90">Current Session</span>
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="text-2xl font-bold mb-2" data-bind="currentSession.duration" data-mock="true">02:34:18</div>
+                    <div class="flex space-x-2">
+                        <button class="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm transition-colors" data-event="click:pauseTimer">
+                            <i class="fas fa-pause mr-1"></i>Pause
+                        </button>
+                        <button class="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm transition-colors" data-event="click:stopTimer">
+                            <i class="fas fa-stop mr-1"></i>Stop
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="space-y-2">
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-primary/10 text-primary rounded-lg font-medium">
+                        <i class="fas fa-tachometer-alt w-4"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-folder-open w-4"></i>
+                        <span>Projects</span>
+                        <span class="ml-auto bg-slate-200 text-slate-600 text-xs px-2 py-1 rounded-full" data-mock="true">12</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-users w-4"></i>
+                        <span>Clients</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-file-invoice-dollar w-4"></i>
+                        <span>Invoices</span>
+                        <span class="ml-auto bg-accent text-white text-xs px-2 py-1 rounded-full" data-mock="true">3</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-quote-right w-4"></i>
+                        <span>Quotes</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fas fa-file-alt w-4"></i>
+                        <span>Documents</span>
+                    </a>
+                    
+                    <div class="pt-4 mt-4 border-t border-slate-200">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">A/B Testing</p>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                            <i class="fas fa-flask w-4"></i>
+                            <span>Experiments</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                            <i class="fas fa-chart-line w-4"></i>
+                            <span>Results</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-200">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Admin</p>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                            <i class="fas fa-users-cog w-4"></i>
+                            <span>User Management</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Activity Logs</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent [dashboard views and data displays] -->
+        <main class="flex-1 p-6">
+            <!-- Dashboard Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900">Dashboard</h2>
+                        <p class="text-slate-600 mt-1">Welcome back! Here's what's happening with your projects.</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button class="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors" data-event="click:exportData">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                        <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors" data-event="click:createProject">
+                            <i class="fas fa-plus mr-2"></i>New Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-600 text-sm font-medium">Total Hours</p>
+                                <p class="text-2xl font-bold text-slate-900 mt-1" data-bind="stats.totalHours" data-mock="true">147.5</p>
+                                <p class="text-sm text-accent mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-mock="true">12% from last week</span>
+                                </p>
+                            </div>
+                            <div class="bg-primary/10 p-3 rounded-lg">
+                                <i class="fas fa-clock text-primary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-600 text-sm font-medium">Revenue</p>
+                                <p class="text-2xl font-bold text-slate-900 mt-1" data-bind="stats.revenue" data-mock="true">$8,420</p>
+                                <p class="text-sm text-accent mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-mock="true">8% from last month</span>
+                                </p>
+                            </div>
+                            <div class="bg-accent/10 p-3 rounded-lg">
+                                <i class="fas fa-dollar-sign text-accent text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-600 text-sm font-medium">Active Projects</p>
+                                <p class="text-2xl font-bold text-slate-900 mt-1" data-bind="stats.activeProjects" data-mock="true">7</p>
+                                <p class="text-sm text-slate-500 mt-1" data-mock="true">3 due this week</p>
+                            </div>
+                            <div class="bg-secondary/10 p-3 rounded-lg">
+                                <i class="fas fa-folder-open text-secondary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-600 text-sm font-medium">A/B Tests</p>
+                                <p class="text-2xl font-bold text-slate-900 mt-1" data-bind="stats.abTests" data-mock="true">4</p>
+                                <p class="text-sm text-warning mt-1">
+                                    <i class="fas fa-flask mr-1"></i>
+                                    <span data-mock="true">2 running</span>
+                                </p>
+                            </div>
+                            <div class="bg-warning/10 p-3 rounded-lg">
+                                <i class="fas fa-chart-bar text-warning text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                
+                <!-- Recent Activity & Time Tracking -->
+                <div class="xl:col-span-2 space-y-6">
+                    
+                    <!-- Active Time Tracking -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Time Tracking</h3>
+                            <button class="text-primary hover:text-primary/80 text-sm font-medium" data-event="click:viewAllSessions">View All</button>
+                        </div>
+                        
+                        <!-- Start New Session -->
+                        <div class="bg-slate-50 rounded-lg p-4 mb-4">
+                            <div class="flex items-center space-x-4">
+                                <select class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm" data-implementation="Populate with user projects">
+                                    <option data-mock="true">Select Project</option>
+                                    <option data-mock="true">Website Redesign - Acme Corp</option>
+                                    <option data-mock="true">Mobile App - TechStart</option>
+                                    <option data-mock="true">Brand Identity - CreativeCo</option>
+                                </select>
+                                <input type="text" placeholder="Task description" class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                                <button class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors" data-event="click:startTimer">
+                                    <i class="fas fa-play mr-2"></i>Start
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Sessions -->
+                        <div class="space-y-3">
+                            <!-- @MAP: recentSessions.map(session => ( -->
+                            <div class="flex items-center justify-between py-3 border-b border-slate-100">
+                                <div class="flex-1">
+                                    <p class="font-medium text-slate-900" data-mock="true">Website Redesign</p>
+                                    <p class="text-sm text-slate-600" data-mock="true">Frontend development and responsive design</p>
+                                    <p class="text-xs text-slate-500 mt-1" data-mock="true">Acme Corp • Today 9:00 AM - 11:30 AM</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-slate-900" data-mock="true">2h 30m</p>
+                                    <span class="inline-block bg-accent/10 text-accent text-xs px-2 py-1 rounded-full" data-mock="true">Billable</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between py-3 border-b border-slate-100">
+                                <div class="flex-1">
+                                    <p class="font-medium text-slate-900" data-mock="true">Mobile App Development</p>
+                                    <p class="text-sm text-slate-600" data-mock="true">API integration and user authentication</p>
+                                    <p class="text-xs text-slate-500 mt-1" data-mock="true">TechStart • Yesterday 2:00 PM - 5:15 PM</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-slate-900" data-mock="true">3h 15m</p>
+                                    <span class="inline-block bg-accent/10 text-accent text-xs px-2 py-1 rounded-full" data-mock="true">Billable</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between py-3">
+                                <div class="flex-1">
+                                    <p class="font-medium text-slate-900" data-mock="true">Brand Identity Design</p>
+                                    <p class="text-sm text-slate-600" data-mock="true">Logo concepts and brand guidelines</p>
+                                    <p class="text-xs text-slate-500 mt-1" data-mock="true">CreativeCo • Yesterday 10:00 AM - 12:45 PM</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-slate-900" data-mock="true">2h 45m</p>
+                                    <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full" data-mock="true">Non-billable</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Active Projects</h3>
+                            <button class="text-primary hover:text-primary/80 text-sm font-medium">View All</button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- @MAP: activeProjects.map(project => ( -->
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-slate-900" data-mock="true">Website Redesign</h4>
+                                        <p class="text-sm text-slate-600" data-mock="true">Acme Corporation</p>
+                                    </div>
+                                    <span class="bg-accent/10 text-accent text-xs px-2 py-1 rounded-full font-medium" data-mock="true">In Progress</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
+                                    <span data-mock="true">Due: March 15, 2024</span>
+                                    <span data-mock="true">Budget: $5,500</span>
+                                </div>
+                                <div class="bg-slate-100 rounded-full h-2 mb-2">
+                                    <div class="bg-accent h-2 rounded-full" style="width: 65%" data-bind="project.progress"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-slate-500">
+                                    <span data-mock="true">65% Complete</span>
+                                    <span data-mock="true">32h logged</span>
+                                </div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-slate-900" data-mock="true">Mobile App Development</h4>
+                                        <p class="text-sm text-slate-600" data-mock="true">TechStart Inc.</p>
+                                    </div>
+                                    <span class="bg-warning/10 text-warning text-xs px-2 py-1 rounded-full font-medium" data-mock="true">Review</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
+                                    <span data-mock="true">Due: March 28, 2024</span>
+                                    <span data-mock="true">Budget: $12,000</span>
+                                </div>
+                                <div class="bg-slate-100 rounded-full h-2 mb-2">
+                                    <div class="bg-warning h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-slate-500">
+                                    <span data-mock="true">85% Complete</span>
+                                    <span data-mock="true">96h logged</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Content -->
+                <div class="space-y-6">
+                    
+                    <!-- A/B Testing Dashboard -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">A/B Testing</h3>
+                            <button class="text-primary hover:text-primary/80 text-sm font-medium" data-event="click:createExperiment">
+                                <i class="fas fa-plus mr-1"></i>New Test
+                            </button>
+                        </div>
+                        
+                        <!-- Active Experiments -->
+                        <div class="space-y-4">
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-slate-900" data-mock="true">Invoice Template A vs B</h4>
+                                    <span class="bg-accent/10 text-accent text-xs px-2 py-1 rounded-full" data-mock="true">Running</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mb-3" data-mock="true">Testing payment conversion rates</p>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Version A</span>
+                                        <span class="font-medium" data-mock="true">67% (45 views)</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Version B</span>
+                                        <span class="font-medium" data-mock="true">73% (38 views)</span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-slate-200">
+                                    <div class="flex items-center justify-between text-xs text-slate-500">
+                                        <span data-mock="true">7 days remaining</span>
+                                        <span data-mock="true">83 total views</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h4 class="font-medium text-slate-900" data-mock="true">Quote Follow-up Email</h4>
+                                    <span class="bg-secondary/10 text-secondary text-xs px-2 py-1 rounded-full" data-mock="true">Complete</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mb-3" data-mock="true">Email subject line optimization</p>
+                                <div class="bg-accent/10 text-accent text-sm p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-trophy mr-2"></i>
+                                        <span>Winner: Version B (+24% open rate)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Invoices -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Recent Invoices</h3>
+                            <button class="text-primary hover:text-primary/80 text-sm font-medium" data-event="click:createInvoice">
+                                <i class="fas fa-plus mr-1"></i>New Invoice
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <!-- @MAP: recentInvoices.map(invoice => ( -->
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <p class="font-medium text-slate-900" data-mock="true">INV-2024-001</p>
+                                        <p class="text-sm text-slate-600" data-mock="true">Acme Corporation</p>
+                                    </div>
+                                    <span class="bg-accent/10 text-accent text-xs px-2 py-1 rounded-full" data-mock="true">Paid</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-semibold text-slate-900" data-mock="true">$2,750.00</span>
+                                    <button class="text-slate-400 hover:text-slate-600" data-event="click:downloadInvoice">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2" data-mock="true">Paid on March 1, 2024</p>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <p class="font-medium text-slate-900" data-mock="true">INV-2024-002</p>
+                                        <p class="text-sm text-slate-600" data-mock="true">TechStart Inc.</p>
+                                    </div>
+                                    <span class="bg-warning/10 text-warning text-xs px-2 py-1 rounded-full" data-mock="true">Pending</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-semibold text-slate-900" data-mock="true">$4,200.00</span>
+                                    <button class="text-slate-400 hover:text-slate-600">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2" data-mock="true">Due March 15, 2024</p>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <p class="font-medium text-slate-900" data-mock="true">INV-2024-003</p>
+                                        <p class="text-sm text-slate-600" data-mock="true">CreativeCo</p>
+                                    </div>
+                                    <span class="bg-red-50 text-red-600 text-xs px-2 py-1 rounded-full" data-mock="true">Overdue</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-semibold text-slate-900" data-mock="true">$1,850.00</span>
+                                    <button class="text-slate-400 hover:text-slate-600">
+                                        <i class="fas fa-bell"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-red-500 mt-2" data-mock="true">Due February 28, 2024</p>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 bg-primary/5 text-primary rounded-lg hover:bg-primary/10 transition-colors" data-event="click:generateInvoice">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span class="font-medium">Generate Invoice</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors" data-event="click:createQuote">
+                                <i class="fas fa-quote-right"></i>
+                                <span class="font-medium">Create Quote</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors" data-event="click:addClient">
+                                <i class="fas fa-user-plus"></i>
+                                <span class="font-medium">Add Client</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors" data-event="click:viewReports">
+                                <i class="fas fa-chart-bar"></i>
+                                <span class="font-medium">View Reports</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+
+    <!-- @STATE: Various modal states for create/edit actions -->
+    <!-- @FUNCTIONALITY: All interactive elements should connect to appropriate backend APIs -->
+    <!-- @FUNCTIONALITY: A/B testing should track user interactions and present different template versions -->
+    <!-- @FUNCTIONALITY: Time tracking should persist across browser sessions and sync in real-time -->
+    <!-- @FUNCTIONALITY: Invoice generation should be automated based on project hours and rates -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Timer functionality placeholder
+            let currentTimer = null;
+            let startTime = null;
+
+            // Modal management
+            function showModal(modalId) {
+                // TODO: Show modal implementation
+                console.log('Show modal:', modalId);
+            }
+
+            function hideModal(modalId) {
+                // TODO: Hide modal implementation
+                console.log('Hide modal:', modalId);
+            }
+
+            // Timer controls
+            function startTimer() {
+                // TODO: Start timer implementation with API sync
+                console.log('Starting timer...');
+            }
+
+            function pauseTimer() {
+                // TODO: Pause timer implementation
+                console.log('Pausing timer...');
+            }
+
+            function stopTimer() {
+                // TODO: Stop timer and save session
+                console.log('Stopping timer...');
+            }
+
+            // A/B Testing functionality
+            function toggleABTesting() {
+                // TODO: Toggle A/B testing mode
+                console.log('Toggling A/B testing...');
+            }
+
+            // Export functionality
+            function exportData() {
+                // TODO: Generate and download reports
+                console.log('Exporting data...');
+            }
+
+            // Initialize dashboard
+            document.addEventListener('DOMContentLoaded', function() {
+                // TODO: Load dashboard data from API
+                console.log('Dashboard loaded');
+                
+                // TODO: Initialize real-time updates for timer
+                // TODO: Set up notification polling
+                // TODO: Initialize A/B testing framework
+            });
+        })();
+    </script>
+</body>
+</html>

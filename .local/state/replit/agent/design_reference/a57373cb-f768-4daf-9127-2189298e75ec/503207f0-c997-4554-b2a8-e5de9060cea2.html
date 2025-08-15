@@ -1,0 +1,605 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceTracker Pro - Project Hours & Invoice Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-transition { transition: margin-left 0.3s ease-in-out; }
+        .timer-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <!-- @COMPONENT: AppLayout [Main application shell with sidebar and content area] -->
+    <div class="flex h-screen bg-slate-50">
+        <!-- @COMPONENT: Sidebar [Navigation and user info] -->
+        <div class="w-64 bg-white shadow-sm border-r border-slate-200 flex flex-col">
+            <!-- Logo and User Info -->
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-xl font-semibold text-slate-900">FreelanceTracker</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <!-- User profile image (not guaranteed to be square) -->
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                         alt="User avatar" 
+                         class="w-10 h-10 rounded-full object-cover border-2 border-slate-200" 
+                         data-bind="user.profileImage">
+                    <div>
+                        <p class="text-sm font-medium text-slate-900" data-bind="user.name">Alex Johnson</p>
+                        <p class="text-xs text-slate-500" data-bind="user.role">Freelancer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <!-- @STATE: activeTab:string = 'dashboard' -->
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-primary-50 text-primary-700 font-medium" data-nav="dashboard">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="time-tracking">
+                    <i class="fas fa-play-circle w-5"></i>
+                    <span>Time Tracking</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="projects">
+                    <i class="fas fa-folder w-5"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="clients">
+                    <i class="fas fa-users w-5"></i>
+                    <span>Clients</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="invoices">
+                    <i class="fas fa-file-invoice w-5"></i>
+                    <span>Invoices</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="quotes">
+                    <i class="fas fa-quote-left w-5"></i>
+                    <span>Quotes</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="documents">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>Documents</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="ab-testing">
+                    <i class="fas fa-flask w-5"></i>
+                    <span>A/B Testing</span>
+                </a>
+                
+                <!-- Admin Only Section -->
+                <!-- @CONDITIONAL: user.role === 'admin' -->
+                <div class="border-t border-slate-200 pt-4 mt-4">
+                    <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Admin</p>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="user-management">
+                        <i class="fas fa-user-cog w-5"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="payment-config">
+                        <i class="fas fa-credit-card w-5"></i>
+                        <span>Payment Config</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-nav="activity-logs">
+                        <i class="fas fa-history w-5"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Logout Button -->
+            <div class="p-4 border-t border-slate-200">
+                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors" data-event="click:handleLogout">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent [Primary content area] -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-slate-900">Dashboard</h2>
+                        <p class="text-sm text-slate-500">Welcome back! Here's what's happening with your projects.</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Quick Timer Toggle -->
+                        <div class="flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2">
+                            <div class="w-2 h-2 bg-red-500 rounded-full timer-pulse"></div>
+                            <span class="text-sm font-medium text-slate-700" data-bind="currentTimer.project">Website Redesign</span>
+                            <span class="text-sm text-slate-500" data-bind="currentTimer.duration">02:34:12</span>
+                            <button class="text-slate-400 hover:text-slate-600 transition-colors" data-event="click:stopTimer">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Notifications -->
+                        <button class="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center" data-bind="notifications.count">3</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Overview Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Card 1: This Week's Hours -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-blue-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">+12%</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-bind="stats.weeklyHours">42.5</h3>
+                        <p class="text-sm text-slate-500">Hours This Week</p>
+                    </div>
+
+                    <!-- Card 2: Active Projects -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-folder text-purple-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">+2</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-bind="stats.activeProjects">8</h3>
+                        <p class="text-sm text-slate-500">Active Projects</p>
+                    </div>
+
+                    <!-- Card 3: Pending Invoices -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-invoice text-yellow-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">Urgent</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-bind="stats.pendingInvoices">$4,250</h3>
+                        <p class="text-sm text-slate-500">Pending Invoices</p>
+                    </div>
+
+                    <!-- Card 4: Monthly Revenue -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-green-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">+18%</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900" data-bind="stats.monthlyRevenue">$12,890</h3>
+                        <p class="text-sm text-slate-500">This Month</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Recent Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 transition-colors" data-event="click:startNewTimer">
+                                <i class="fas fa-play"></i>
+                                <span>Start Time Tracking</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors" data-event="click:createInvoice">
+                                <i class="fas fa-plus"></i>
+                                <span>Create Invoice</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors" data-event="click:addProject">
+                                <i class="fas fa-folder-plus"></i>
+                                <span>Add Project</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 px-4 py-3 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors" data-event="click:generateQuote">
+                                <i class="fas fa-quote-left"></i>
+                                <span>Generate Quote</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Recent Activity</h3>
+                            <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">View All</button>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- @MAP: recentActivity.map(activity => ( -->
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-green-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-900">Invoice #INV-2024-001 paid</p>
+                                    <p class="text-xs text-slate-500">TechCorp Ltd • $2,450.00 • 2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-blue-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-900">Time logged: Website Redesign</p>
+                                    <p class="text-xs text-slate-500">3 hours 15 minutes • 4 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-quote-left text-purple-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-900">Quote sent: Mobile App Development</p>
+                                    <p class="text-xs text-slate-500">StartupX • $15,000.00 • 6 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg transition-colors" data-mock="true">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-plus text-yellow-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-900">New client added: Innovation Labs</p>
+                                    <p class="text-xs text-slate-500">Contact: Sarah Johnson • Yesterday</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Tracking Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-slate-900">Active Time Tracking</h3>
+                        <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2" data-event="click:showNewTimerModal">
+                            <i class="fas fa-plus"></i>
+                            <span>Start New Timer</span>
+                        </button>
+                    </div>
+
+                    <!-- Current Timer -->
+                    <div class="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-4 mb-6" data-mock="true">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-3 h-3 bg-red-500 rounded-full timer-pulse"></div>
+                                <div>
+                                    <h4 class="font-medium text-slate-900" data-bind="activeTimer.projectName">Website Redesign - TechCorp</h4>
+                                    <p class="text-sm text-slate-600" data-bind="activeTimer.task">Frontend Development</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-2xl font-mono font-bold text-slate-900" data-bind="activeTimer.elapsed">02:34:12</p>
+                                    <p class="text-sm text-slate-500">Started at 9:15 AM</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors" data-event="click:pauseTimer">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                    <button class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-red-600 hover:text-red-700 transition-colors" data-event="click:stopTimer">
+                                        <i class="fas fa-stop"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Time Entries -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 px-4 font-medium text-slate-600">Project</th>
+                                    <th class="text-left py-3 px-4 font-medium text-slate-600">Task</th>
+                                    <th class="text-left py-3 px-4 font-medium text-slate-600">Duration</th>
+                                    <th class="text-left py-3 px-4 font-medium text-slate-600">Date</th>
+                                    <th class="text-left py-3 px-4 font-medium text-slate-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <!-- @MAP: timeEntries.map(entry => ( -->
+                                <tr class="hover:bg-slate-50 transition-colors" data-mock="true">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            <span class="font-medium text-slate-900">E-commerce Platform</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-slate-600">API Integration</td>
+                                    <td class="py-3 px-4 font-mono text-slate-900">4:30:00</td>
+                                    <td class="py-3 px-4 text-slate-600">Today</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-700 transition-colors" data-event="click:editTimeEntry">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-700 transition-colors" data-event="click:deleteTimeEntry">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors" data-mock="true">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                            <span class="font-medium text-slate-900">Mobile App</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-slate-600">UI Design</td>
+                                    <td class="py-3 px-4 font-mono text-slate-900">2:15:30</td>
+                                    <td class="py-3 px-4 text-slate-600">Yesterday</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-700 transition-colors" data-event="click:editTimeEntry">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-700 transition-colors" data-event="click:deleteTimeEntry">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- A/B Testing Quick Overview -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- A/B Test Results -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">A/B Test Results</h3>
+                            <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Running</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border border-slate-200 rounded-lg p-4" data-mock="true">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-slate-900">Invoice Template Test</h4>
+                                    <span class="text-sm text-slate-500">7 days remaining</span>
+                                </div>
+                                <div class="flex space-x-4 text-sm">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-slate-600">Template A</span>
+                                            <span class="font-medium">72% paid</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 72%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-slate-600">Template B</span>
+                                            <span class="font-medium">68% paid</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 68%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg p-4" data-mock="true">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-slate-900">Quote Response Test</h4>
+                                    <span class="text-sm text-slate-500">Completed</span>
+                                </div>
+                                <div class="flex space-x-4 text-sm">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-slate-600">Format A</span>
+                                            <span class="font-medium">24% response</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 24%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-slate-600">Format B</span>
+                                            <span class="font-medium text-green-600">38% response</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 38%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Deadlines -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Upcoming Deadlines</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: upcomingDeadlines.map(deadline => ( -->
+                            <div class="flex items-center space-x-4 p-3 border border-red-200 bg-red-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-exclamation text-red-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-slate-900">E-commerce Platform</h4>
+                                    <p class="text-sm text-slate-600">Final deliverables due</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-red-600">Tomorrow</p>
+                                    <p class="text-xs text-slate-500">Jan 15, 2024</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 border border-yellow-200 bg-yellow-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-yellow-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-slate-900">Mobile App Design</h4>
+                                    <p class="text-sm text-slate-600">Prototype review</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-yellow-600">3 days</p>
+                                    <p class="text-xs text-slate-500">Jan 18, 2024</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-3 border border-blue-200 bg-blue-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-invoice text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-slate-900">Monthly Invoice</h4>
+                                    <p class="text-sm text-slate-600">TechCorp Ltd</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-blue-600">1 week</p>
+                                    <p class="text-xs text-slate-500">Jan 22, 2024</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <!-- @COMPONENT: NewTimerModal [Modal for starting new time tracking session] -->
+    <div id="newTimerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-900">Start New Timer</h3>
+                <button class="text-slate-400 hover:text-slate-600 transition-colors" data-event="click:closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4" data-event="submit:createNewTimer">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Project</label>
+                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" data-bind="newTimer.projectId">
+                            <option value="">Select a project</option>
+                            <option value="1" data-mock="true">Website Redesign - TechCorp</option>
+                            <option value="2" data-mock="true">E-commerce Platform - ShopCo</option>
+                            <option value="3" data-mock="true">Mobile App - StartupX</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Task Description</label>
+                        <input type="text" placeholder="What are you working on?" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" data-bind="newTimer.taskDescription">
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors" data-event="click:closeModal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                            Start Timer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NewTimerModal -->
+
+    <script>
+        // TODO: Implement comprehensive time tracking functionality
+        // TODO: Implement A/B testing framework with statistical analysis
+        // TODO: Implement secure payment API key management
+        // TODO: Implement role-based access control
+        // TODO: Implement real-time notifications and activity updates
+        // TODO: Implement document generation and cloud storage integration
+        
+        (function() {
+            // Mock navigation functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const navLinks = document.querySelectorAll('[data-nav]');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        // Remove active class from all links
+                        navLinks.forEach(l => l.classList.remove('bg-primary-50', 'text-primary-700', 'font-medium'));
+                        navLinks.forEach(l => l.classList.add('text-slate-600'));
+                        // Add active class to clicked link
+                        this.classList.add('bg-primary-50', 'text-primary-700', 'font-medium');
+                        this.classList.remove('text-slate-600');
+                    });
+                });
+
+                // Modal functionality
+                const modal = document.getElementById('newTimerModal');
+                const openModalBtns = document.querySelectorAll('[data-event*="showNewTimerModal"]');
+                const closeModalBtns = document.querySelectorAll('[data-event*="closeModal"]');
+
+                openModalBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        modal.classList.remove('hidden');
+                    });
+                });
+
+                closeModalBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        modal.classList.add('hidden');
+                    });
+                });
+
+                // Close modal on outside click
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                    }
+                });
+
+                // Timer update simulation
+                function updateTimer() {
+                    const timerElements = document.querySelectorAll('[data-bind*="timer.duration"], [data-bind*="activeTimer.elapsed"]');
+                    timerElements.forEach(element => {
+                        // This would be replaced with real timer logic
+                        const currentTime = element.textContent;
+                        // Placeholder for timer increment logic
+                    });
+                }
+
+                // Update timer every second (in real implementation)
+                // setInterval(updateTimer, 1000);
+            });
+        })();
+    </script>
+</body>
+</html>
